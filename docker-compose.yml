@@ -4,11 +4,25 @@ services:
 
   app:
     image: meteosangue/meteosangue:latest
+    restart: always
     ports:
       - "80:8000"
     depends_on:
       - db
       - redis
+    command: ./docker-startup.sh app
+    env_file:
+      - ./envs/meteosangue.env
+      - ./envs/db.env
+
+  cron:
+    image: meteosangue/meteosangue:latest
+    restart: always
+    depends_on:
+      - app
+      - db
+      - redis
+    command: ./docker-startup.sh cron
     env_file:
       - ./envs/meteosangue.env
       - ./envs/db.env
